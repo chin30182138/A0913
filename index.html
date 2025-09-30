@@ -108,8 +108,8 @@
                     options: { scales: { r: { beginAtZero: true, max: 100 } } }
                 });
             } catch (error) {
-                console.error('錯誤詳情:', error);
-                document.getElementById('result').innerText = `錯誤：${error.message}`;
+                console.error('錯誤詳情:', error); // 調試用
+                document.getElementById('result').innerText = `錯誤：${error.message}\n請檢查伺服器是否運行[](http://localhost:3000)`;
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }
@@ -146,7 +146,7 @@
             <select id="person2-liushou"></select>
             <select id="person2-dizhi">
                 <option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option>
-                <option value="卯">卄</option><option value="辰">辰</option><option value="巳">巳</option>
+                <option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option>
                 <option value="午">午</option><option value="未">未</option><option value="申">申</option>
                 <option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option>
             </select>
