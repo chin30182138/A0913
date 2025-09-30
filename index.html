@@ -66,7 +66,7 @@
             const ctx = document.getElementById('radarChart').getContext('2d');
             if (window.myChart) window.myChart.destroy();
 
-            const url = 'http://localhost:3000/analyze'; // 確認端口與 analyze.js 一致
+            const url = 'http://localhost:3000/analyze';
             const data = {
                 person1: { liqin: person1Liqin, liushou: person1Liushou, dizhi: person1Dizhi },
                 person2: { liqin: person2Liqin, liushou: person2Liushou, dizhi: person2Dizhi }
@@ -108,7 +108,7 @@
                     options: { scales: { r: { beginAtZero: true, max: 100 } } }
                 });
             } catch (error) {
-                console.error('錯誤詳情:', error); // 調試用，檢查控制台
+                console.error('錯誤詳情:', error);
                 document.getElementById('result').innerText = `錯誤：${error.message}`;
             } finally {
                 document.getElementById('loading').style.display = 'none';
@@ -146,7 +146,7 @@
             <select id="person2-liushou"></select>
             <select id="person2-dizhi">
                 <option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option>
-                <option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option>
+                <option value="卯">卄</option><option value="辰">辰</option><option value="巳">巳</option>
                 <option value="午">午</option><option value="未">未</option><option value="申">申</option>
                 <option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option>
             </select>
