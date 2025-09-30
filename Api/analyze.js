@@ -1,9 +1,10 @@
-// analyze.js (假設內容)
 const express = require('express');
+const cors = require('cors'); // 新增這行
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.use(cors()); // 新增這行，允許所有來源請求
 
 app.post('/analyze', (req, res) => {
     const { person1, person2 } = req.body;
@@ -14,13 +15,13 @@ app.post('/analyze', (req, res) => {
     const p2Liushou = person2.liushou;
     const p2Dizhi = person2.dizhi;
 
-    // 簡單的分析邏輯（可替換為你的實際算法）
+    // 你的分析邏輯（可擴展五行生剋等）
     let compatibility = 50, trust = 50, pace = 50, innovation = 50, communication = 50;
     if (p1Liushou === '青龍') innovation += 10;
     if (p2Liushou === '朱雀') communication += 10;
-    if (p1Dizhi === '寅' && p2Dizhi === '申') trust -= 10; // 木剋金影響
+    // ... 其他邏輯
 
-    const analysis = `- 雙方信息：\n  甲方: ${p1Liqin}, ${p1Liushou}, ${p1Dizhi}\n  乙方: ${p2Liqin}, ${p2Liushou}, ${p2Dizhi}\n- 分析：甲方${p1Liushou}特質與乙方${p2Liushou}互動，${p1Dizhi}與${p2Dizhi}五行${(trust < 50 ? '剋制' : '相生')}，建議注重${trust < 50 ? '信任修復' : '合作深化'}。`;
+    const analysis = `- 雙方信息：\n  甲方: ${p1Liqin}, ${p1Liushou}, ${p1Dizhi}\n  乙方: ${p2Liqin}, ${p2Liushou}, ${p2Dizhi}\n- 分析：甲方${p1Liushou}特質進取，乙方${p2Liushou}擅溝通，建議注重團隊協調。`;
 
     res.json({
         analysis: analysis,
