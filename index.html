@@ -22,8 +22,8 @@
         function updateOptions(person, otherPersonPrefix) {
             const liqinSelect = document.getElementById(`${person}-liqin`);
             const liushouSelect = document.getElementById(`${person}-liushou`);
-            const otherLiqin = document.getElementById(`${otherPersonPrefix}-liqin`).value;
-            const otherLiushou = document.getElementById(`${otherPersonPrefix}-liushou`).value;
+            const otherLiqin = document.getElementById(`${otherPersonPrefix}-liqin`).value || '';
+            const otherLiushou = document.getElementById(`${otherPersonPrefix}-liushou`).value || '';
 
             liqinSelect.innerHTML = '';
             liushouSelect.innerHTML = '';
@@ -58,7 +58,7 @@
             const person2Liushou = document.getElementById('person2-liushou').value;
             const person2Dizhi = document.getElementById('person2-dizhi').value;
 
-            // 簡單的本地模擬分析（基於六親和六獸的組合）
+            // 簡單的本地模擬分析
             let compatibility = 60, trust = 65, pace = 70, innovation = 55, communication = 60;
             if (person1Liqin === '兄弟' && person2Liqin === '子孫') {
                 compatibility += 10; trust += 5;
@@ -98,5 +98,38 @@
 
         window.onload = initializeSelects;
     </script>
+</head>
+<body>
+    <div class="container">
+        <h2>職場關係分析工具</h2>
+        
+        <div class="section">
+            <h3>第一方信息</h3>
+            <select id="person1-liqin"></select>
+            <select id="person1-liushou"></select>
+            <select id="person1-dizhi">
+                <option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option>
+                <option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option>
+                <option value="午">午</option><option value="未">未</option><option value="申">申</option>
+                <option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <h3>第二方信息</h3>
+            <select id="person2-liqin"></select>
+            <select id="person2-liushou"></select>
+            <select id="person2-dizhi">
+                <option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option>
+                <option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option>
+                <option value="午">午</option><option value="未">未</option><option value="申">申</option>
+                <option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option>
+            </select>
+        </div>
+
+        <button onclick="analyzeRelationship()">開始分析</button>
+        <canvas id="radarChart" class="radar-chart"></canvas>
+        <div id="result"></div>
+    </div>
 </body>
 </html>
