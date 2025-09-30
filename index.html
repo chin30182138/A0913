@@ -11,13 +11,24 @@
         select, button { padding: 10px; margin: 5px 0; }
         .radar-chart { width: 400px; height: 400px; margin: 20px auto; }
         #result { margin-top: 20px; }
-        .loading { display: none; text-align: center; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script>
-        // 初始六親和六獸選項
         const liqinOptions = ['兄弟', '子孫', '妻財', '官鬼', '父母'];
         const liushouOptions = ['青龍', '朱雀', '勾陳', '螣蛇', '白虎', '玄武'];
+
+        // 地支與五行對應
+        const dizhiFiveElements = {
+            '子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土',
+            '巳': '火', '午': '火', '未': '土', '申': '金', '酉': '金',
+            '戌': '土', '亥': '水'
+        };
+
+        // 五行生剋關係
+        const fiveElementsCycle = {
+            '生': { '木': '火', '火': '土', '土': '金', '金': '水', '水': '木' },
+            '剋': { '木': '土', '土': '水', '水': '火', '火': '金', '金': '木' }
+        };
 
         function updateOptions(person, otherPersonPrefix) {
             const liqinSelect = document.getElementById(`${person}-liqin`);
@@ -58,16 +69,55 @@
             const person2Liushou = document.getElementById('person2-liushou').value;
             const person2Dizhi = document.getElementById('person2-dizhi').value;
 
-            // 簡單的本地模擬分析
-            let compatibility = 60, trust = 65, pace = 70, innovation = 55, communication = 60;
+            // 初始分數
+            let compatibility = 50, trust = 50, pace = 50, innovation = 50, communication = 50;
+
+            // 甲方個性影響 (六獸 + 地支)
+            if (person1Liushou === '青龍') innovation += 10; // 增創新
+            if (person1Liushou === '朱雀') communication += 10; // 增溝通
+            if (person1Liushou === '白虎') pace += 10; // 增節奏
+            if (person1Liushou === '螣蛇') { innovation += 10; trust -= 5; } // 增創新，減信任
+            if (person1Liushou === '玄武') trust -= 10; // 減信任
+            if (person1Dizhi === '寅') { innovation += 10; pace += 5; } // 虎：領導力
+            if (person1Dizhi === '子') trust += 5; // 鼠：謹慎增信任
+            if (person1Dizhi === '午') { pace += 10; communication -= 5; } // 馬：快但衝動
+
+            // 乙方個性影響
+            if (person2Liushou === '青龍') innovation += 10;
+            if (person2Liushou === '朱雀') communication += 10;
+            if (person2Liushou === '白虎') pace += 10;
+            if (person2Liushou === '螣蛇') { innovation += 10; trust -= 5; }
+            if (person2Liushou === '玄武') trust -= 10;
+            if (person2Dizhi === '寅') { innovation += 10; pace += 5; }
+            if (person2Dizhi === '子') trust += 5;
+            if (person2Dizhi === '午') { pace += 10; communication -= 5; }
+
+            // 雙方互動影響 (六獸 + 地支五行)
+            if ((person1Liushou === '青龍' && person2Liushou === '白虎') ||
+                (person1Liushou === '白虎' && person2Liushou === '青龍')) {
+                pace += 15; communication -= 5; // 青龍+白虎：節奏快，溝通易衝
+            }
             if (person1Liqin === '兄弟' && person2Liqin === '子孫') {
-                compatibility += 10; trust += 5;
-            } else if (person1Liushou === '青龍' && person2Liushou === '白虎') {
-                pace += 15; communication -= 5;
+                compatibility += 10; trust += 5; // 兄弟+子孫：相容性高
             }
 
+            // 五行生剋影響
+            const p1Element = dizhiFiveElements[person1Dizhi];
+            const p2Element = dizhiFiveElements[person2Dizhi];
+            if (fiveElementsCycle['生'][p1Element] === p2Element) {
+                compatibility += 10; communication += 5; // 甲生乙，增相容與溝通
+            } else if (fiveElementsCycle['剋'][p1Element] === p2Element) {
+                trust -= 10; pace -= 5; // 甲剋乙，減信任與節奏
+            } else if (fiveElementsCycle['剋'][p2Element] === p1Element) {
+                trust -= 10; pace -= 5; // 乙剋甲，同上
+            }
+
+            // 限制分數範圍 0-100
+            [compatibility, trust, pace, innovation, communication] = 
+                [compatibility, trust, pace, innovation, communication].map(v => Math.min(100, Math.max(0, v)));
+
             // 顯示分析結果
-            document.getElementById('result').innerText = `分析結果：\n- 雙方信息：\n  甲方: ${person1Liqin}, ${person1Liushou}, ${person1Dizhi}\n  乙方: ${person2Liqin}, ${person2Liushou}, ${person2Dizhi}\n- 職場關係評估:\n  - 相容性: ${compatibility}\n  - 信任度: ${trust}\n  - 節奏配合: ${pace}\n  - 創新能力: ${innovation}\n  - 溝通效率: ${communication}`;
+            document.getElementById('result').innerText = `分析結果：\n- 雙方信息：\n  甲方: ${person1Liqin}, ${person1Liushou}, ${person1Dizhi} (${p1Element})\n  乙方: ${person2Liqin}, ${person2Liushou}, ${person2Dizhi} (${p2Element})\n- 職場關係評估:\n  - 相容性: ${compatibility}\n  - 信任度: ${trust}\n  - 節奏配合: ${pace}\n  - 創新能力: ${innovation}\n  - 溝通效率: ${communication}`;
 
             // 繪製雷達圖
             const ctx = document.getElementById('radarChart').getContext('2d');
