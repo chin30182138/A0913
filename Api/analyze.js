@@ -7,9 +7,10 @@ app.use(express.json());
 app.use(cors());
 
 app.post('/analyze', (req, res) => {
-    console.log('收到請求:', req.body); // 調試日誌
+    console.log('收到請求:', req.body);
     const { person1, person2 } = req.body;
     if (!person1 || !person2) {
+        console.log('錯誤: 數據缺失');
         return res.status(400).json({ error: '缺少 person1 或 person2 數據' });
     }
     const p1Liqin = person1.liqin;
