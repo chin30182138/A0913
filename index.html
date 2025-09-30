@@ -61,14 +61,12 @@
             const person2Liushou = document.getElementById('person2-liushou').value;
             const person2Dizhi = document.getElementById('person2-dizhi').value;
 
-            // 顯示載入中
             document.getElementById('loading').style.display = 'block';
             document.getElementById('result').innerText = '';
             const ctx = document.getElementById('radarChart').getContext('2d');
             if (window.myChart) window.myChart.destroy();
 
-            // 調用本地 analyze.js API
-            const url = 'http://localhost:3000/analyze'; // 假設端口為 3000，需與 analyze.js 一致
+            const url = 'http://localhost:3000/analyze'; // 確認端口與 analyze.js 一致
             const data = {
                 person1: { liqin: person1Liqin, liushou: person1Liushou, dizhi: person1Dizhi },
                 person2: { liqin: person2Liqin, liushou: person2Liushou, dizhi: person2Dizhi }
@@ -77,19 +75,18 @@
             try {
                 const response = await fetch(url, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
 
-                if (!response.ok) throw new Error('API 請求失敗');
-                const result = await response.json();
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP 錯誤 ${response.status}: ${errorText}`);
+                }
 
-                // 顯示分析結果
+                const result = await response.json();
                 document.getElementById('result').innerText = `分析結果：\n${result.analysis}\n- 職場關係評估:\n  - 相容性: ${result.scores.compatibility}\n  - 信任度: ${result.scores.trust}\n  - 節奏配合: ${result.scores.pace}\n  - 創新能力: ${result.scores.innovation}\n  - 溝通效率: ${result.scores.communication}`;
 
-                // 繪製雷達圖
                 window.myChart = new Chart(ctx, {
                     type: 'radar',
                     data: {
@@ -108,11 +105,10 @@
                             borderWidth: 2
                         }]
                     },
-                    options: {
-                        scales: { r: { beginAtZero: true, max: 100 } }
-                    }
+                    options: { scales: { r: { beginAtZero: true, max: 100 } } }
                 });
             } catch (error) {
+                console.error('錯誤詳情:', error); // 調試用，檢查控制台
                 document.getElementById('result').innerText = `錯誤：${error.message}`;
             } finally {
                 document.getElementById('loading').style.display = 'none';
@@ -150,7 +146,7 @@
             <select id="person2-liushou"></select>
             <select id="person2-dizhi">
                 <option value="子">子</option><option value="丑">丑</option><option value="寅">寅</option>
-                <option value="卯">卄</option><option value="辰">辰</option><option value="巳">巳</option>
+                <option value="卯">卯</option><option value="辰">辰</option><option value="巳">巳</option>
                 <option value="午">午</option><option value="未">未</option><option value="申">申</option>
                 <option value="酉">酉</option><option value="戌">戌</option><option value="亥">亥</option>
             </select>
