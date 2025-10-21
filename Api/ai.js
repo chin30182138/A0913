@@ -1,4 +1,6 @@
-// api/ai.js
+module.exports = async (req, res) => {
+  // CORS 和請求處理邏輯
+  // api/ai.js
 module.exports = async (req, res) => {
   // 設置 CORS 頭部
   res.setHeader('Access-Control-Allow-Origin', '*');
